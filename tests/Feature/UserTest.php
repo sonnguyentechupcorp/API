@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -13,10 +14,17 @@ class UserTest extends TestCase
      *
      * @return void
      */
-    public function test_example()
-    {
-        $response = $this->get('/');
 
+    public function test_login()
+    {
+        $response = $this->post('/api/login');
         $response->assertStatus(200);
     }
+
+    public function test_register()
+    {
+        $response = $this->post('/api/register');
+        $response->assertStatus(200);
+    }
+
 }

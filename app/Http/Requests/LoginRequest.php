@@ -24,8 +24,8 @@ class LoginRequest extends AbstractRequest
     {
 
         return [
-            'email' => 'required|string|exists:users,email',
-            'password' =>'required|string|'
+            'email' => ['required', 'string', 'exists:users,email'],
+            'password' =>['required', 'string']
         ];
     }
 }

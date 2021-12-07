@@ -17,6 +17,7 @@ class AddGenderBirthDateRoleToUsersTable extends Migration
             $table->boolean('gender')->after('name')->nullable();
             $table->dateTime('birth_date')->after('gender')->nullable();
             $table->json('role')->after('birth_date');
+            $table->string('avatar')->after('email')->nullable();
         });
     }
 
@@ -31,6 +32,7 @@ class AddGenderBirthDateRoleToUsersTable extends Migration
             Schema::dropIfExists('gender');
             Schema::dropIfExists('birth_date');
             Schema::dropIfExists('role');
+            Schema::dropIfExists('avatar');
         });
     }
 }

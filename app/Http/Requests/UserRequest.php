@@ -18,14 +18,13 @@ class UserRequest extends AbstractRequest
      */
     public function rules()
     {
+
         return [
-            'name' => 'required|string|min:1|max:255',
-            'email' => 'required|email|max:255|regex:/(\w)@gmail\.com/i|unique:users',
+            'name' => ['required', 'string', 'min:1', 'max:255'],
+            'email' =>['required', 'string', 'unique:users,email'],
             'password' => ["required" , "string"],
-            'birth_date' => 'nullable|date_format:Y-m-d',
-            'gender' => 'nullable|in:0,1'
-
-
+            'birth_date' => ['nullable', 'date_format:Y-m-d'],
+            'gender' => ['nullable', 'in:0,1']
         ];
     }
 }

@@ -10,37 +10,41 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
 
-    public function login(LoginRequest $request){
+    public function login(LoginRequest $request)
+    {
 
         $user = User::where('email', $request->email)->first();
+
         if (!$user || !Hash::check($request->password, $user->password)) {
 
-            return response(['status' => false, 'message' => 'invalid email or password'], 401);
+            return response(['status' => false, 'message' => __('Invalid email or password.')], 401);
         }
 
         $token = $user->createToken('myapptoken')->plainTextToken;
         $response = [
-            'status'=>true,
-            'message'=>'login successfully!',
-            'data' =>[
-                'user'=>$user,
-                'token'=>$token
+            'status' => true,
+            'locale' => app()->getLocale(),
+            'message' => __('Login successfully!'),
+            'data' => [
+                'user' => $user,
+                'token' => $token
             ]
         ];
 
-        return response($response, 201);
+        return response($response, 200);
     }
 
 
     public function logout()
     {
+
         auth()->user()->tokens()->delete();
-        // auth()->logout();
         $response = [
             'status' => true,
-            'message' => 'Logout successfully',
+            'locale' => app()->getLocale(),
+            'message' => __('Logout successfully!'),
         ];
 
-        return response($response, 201);
+        return response($response, 200);
     }
 }

@@ -12,7 +12,6 @@ class AbstractRequest extends FormRequest
 {
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {
-
         if (Request::wantsJson() || Request::is('api/*')) {
             throw new ValidationException(
                 $validator,
@@ -25,11 +24,8 @@ class AbstractRequest extends FormRequest
                 ]),
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
-
         }
+
         parent::failedValidation($validator);
-        // echo "sdsad";
-
-
     }
 }

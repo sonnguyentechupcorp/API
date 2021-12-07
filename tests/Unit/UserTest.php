@@ -25,11 +25,7 @@ class UserTest extends TestCase
      *
      * @return void
      */
-    // public function test_login_form()
-    // {
-    //     $response = $this->get('/login');
-    //     $response->assertStatus(200);
-    // }
+
     public function test_user()
     {
         $user1 = User::make([
@@ -45,5 +41,27 @@ class UserTest extends TestCase
         $this->assertTrue($user1->name != $user2->name);
     }
 
+    public function test_delete_user()
+    {
+        $user = User::factory()->count(1)->make();
 
+        $user = User::first();
+
+        if ($user) {
+            $user->delete();
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_stores_new_users()
+    {
+        $response = $this->postJson('/api/user', ['name' => 'Sally']);
+
+        $response
+            ->assertStatus(201)
+            ->assertJson([
+                'created' => true,
+            ]);
+    }
 }
