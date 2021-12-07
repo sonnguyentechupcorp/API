@@ -30,18 +30,10 @@ class UserController extends Controller
 
     public function store(UserRequest $request)
     {
-        $image = $request->avatar;
-        $url = "";
-        if ($image != null) {
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('upload'), $imageName);
-            $url = "upload/" . $imageName;
-        }
 
         $user = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
-            'avatar' => $url,
             'role' => ["User"],
             'gender' => $request->input('gender'),
             'birth_date' => $request->input('birth_date'),

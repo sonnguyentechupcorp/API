@@ -14,20 +14,12 @@ class RegisterController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        $image = $request->avatar;
-        $url = "";
-        if ($image != null) {
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('upload'), $imageName);
-            $url = "upload/" . $imageName;
-        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'birth_date' => $request->birth_date,
             'gender' => $request->gender,
-            'avatar' => $url,
             'role' => ["User"],
             'password' => Hash::make($request->password),
         ]);
