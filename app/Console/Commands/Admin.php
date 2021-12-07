@@ -39,27 +39,32 @@ class Admin extends Command
      *
      * @return int
      */
+
     public function handle()
     {
 
-        $name = $this->ask('What is your name?');
+        $name = $this->ask(__('What is your name?'));
         $email = $this->ask('What is your email?');
         $password = $this->secret('What is your password?');
         $birthDate = $this->ask('What is your birth date?');
-        $gender = $this->ask('What is your gender?');
+        $gender = $this->choice(
+            'What is your gender?',
+            ['0', '1'],
+        );
         $role = $this->choice(
             'What is your role?',
             ['User', 'Admin', 'Editor'],
-
         );
-        // $role = ["User"];
+        //dd($birthDate);
+        //dd(Carbon::parse($birthDate));
+
 
         $hasErrors = false;
+
         if (empty($name)) {
             $this->error('The name is required!');
             $hasErrors = true;
         }
-
 
         if (empty($email)) {
             $this->error('The email is required!');
@@ -70,15 +75,11 @@ class Admin extends Command
                 $hasErrors = true;
             }
         }
+
         if (empty($password)) {
             $this->error('The password is required!');
             $hasErrors = true;
         }
-        
-
-
-
-
 
         if (!$hasErrors) {
             try {
@@ -86,7 +87,7 @@ class Admin extends Command
                     'name' => $name,
                     'email' => $email,
                     'password' => Hash::make($password),
-                    'birth_date' => $birthDate,
+                    'birth_date' => Carbon::parse($birthDate),
                     'gender' => $gender,
                     'role' => $role
                 ]);
@@ -102,5 +103,4 @@ class Admin extends Command
             }
         }
     }
-    //return Command::SUCCESS;
 }
