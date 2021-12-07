@@ -55,9 +55,6 @@ class Admin extends Command
             'What is your role?',
             ['User', 'Admin', 'Editor'],
         );
-        //dd($birthDate);
-        //dd(Carbon::parse($birthDate));
-
 
         $hasErrors = false;
 
@@ -79,6 +76,12 @@ class Admin extends Command
         if (empty($password)) {
             $this->error('The password is required!');
             $hasErrors = true;
+        }
+
+        try {
+            Carbon::parse($birthDate);
+        } catch (\Exception $exception) {
+            $this->error('Create user failed!:birthDate format error ');
         }
 
         if (!$hasErrors) {
