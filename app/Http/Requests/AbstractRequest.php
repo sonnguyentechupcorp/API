@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response;
 
 class AbstractRequest extends FormRequest
 {
@@ -21,8 +20,7 @@ class AbstractRequest extends FormRequest
                     'locale' => app()->getLocale(),
                     'message' => __('The given data was invalid'),
                     'errors' => $validator->getMessageBag()->toArray()
-                ]),
-                Response::HTTP_UNPROCESSABLE_ENTITY
+                ], 422)
             );
         }
 

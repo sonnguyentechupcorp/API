@@ -24,7 +24,8 @@ class UserRequest extends AbstractRequest
             'email' =>['required', 'string', 'unique:users,email'],
             'password' => ["required" , "string"],
             'birth_date' => ['nullable', 'date_format:Y-m-d'],
-            'gender' => ['nullable', 'in:0,1']
+            'gender' => ['nullable', 'in:0,1'],
+            'avatar' => ['nullable', 'image']
         ];
     }
 }

@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
-
-class RegisterRequest extends AbstractRequest
+class UpdateUserRequest extends AbstractRequest
 {
+
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -12,11 +13,9 @@ class RegisterRequest extends AbstractRequest
      */
     public function rules()
     {
-
         return [
-            'name' => ['required', 'string',' min:1', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'regex:/(\w)@gmail\.com/i', 'unique:users'],
-            'password' => ['required' , 'string', 'confirmed'],
+            'name' => ['required', 'string', 'min:1', 'max:255'],
+            'avatar' => ['nullable', 'image'],
             'birth_date' => ['nullable', 'date_format:Y-m-d'],
             'gender' => ['nullable', 'in:0,1']
         ];
