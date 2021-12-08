@@ -23,31 +23,16 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::get('/users/{id}', [UserController::class, 'show']);
-    Route::post('/users', [UserController::class, 'store']);
-    Route::delete('/users/{id}', [UserController::class, 'destroy']);
+Route::group(['middleware' => ['auth:sanctum'], 'as' => 'user.'], function () {
+    Route::get('/users', [UserController::class, 'index'])->name('index');
+    Route::get('/users/{id}', [UserController::class, 'show'])->name('show');
+    Route::post('/users', [UserController::class, 'store'])->name('store');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('destroy');
+    Route::post('/users-update-avatar/{id}', [UserController::class,'updateAvatar']);
 });
-Route::post('/register', [RegisterController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
 
-// Route::apiResource('users', UserController::class);
-// Route::get('/users', function () {
-//     return new UserResource(User::all());
-// });
+Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout')->middleware('auth:sanctum');
+Route::post('/register', [RegisterController::class, 'register'])->name('auth.register');
+Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 
 
-//SEND MAIL
-        // Route::get('send-mail', function () {
-
-        //     $details = [
-        //         'title' => 'Mail from ABC',
-        //         'body' => 'welcome'
-        //     ];
-
-        //     \Mail::to('asdsad@gmail.com')->send(new \App\Mail\MyTestMail($details));
-
-        //     dd("Email is Sent.");
-        // });

@@ -4,23 +4,15 @@ namespace Tests\Unit;
 
 use App\Models\User;
 use Carbon\Carbon;
-use Exception;
 use Tests\TestCase;
 
-class UserTest extends TestCase
-// {
-//     /**
-//      * A basic unit test example.
-//      *
-//      * @return void
-//      */
-//     public function test_example()
-//     {
-//         $this->assertTrue(true);
-//     }
-// }
+class InsertDatabaseTest extends TestCase
 {
-
+    /**
+     * A basic unit test example.
+     *
+     * @return void
+     */
     protected function createUser()
     {
         return User::create([
