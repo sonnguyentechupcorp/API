@@ -118,8 +118,6 @@ class AuthTest extends TestCase
 
     public function test_logout_api_logout_falied()
     {
-
-
         $response = $this->post(route('auth.logout'), [], [
             'Accept' => '',
             'Authorization' => ''
@@ -138,24 +136,24 @@ class AuthTest extends TestCase
             ]);
     }
 
-    // public function test_logout_api_logout_success()
-    // {
-    //     $user = $this->createUser();
+    public function test_logout_api_logout_success()
+    {
+        $user = $this->createUser();
 
-    //     $token = $user->createToken('myapptoken')->plainTextToken;
+        $token = $user->createToken('myapptoken')->plainTextToken;
 
-    //     $response = $this->post(route('auth.logout'), [], [
-    //         'Accept' => 'application/json',
-    //         'Authorization' => 'Bearer' .$token
-    //     ]);
+        $response = $this->post(route('auth.logout'), [], [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ]);
 
-    //     $response->assertStatus(200)
-    //         ->assertJsonStructure([
-    //             "status",
-    //             "locale",
-    //             "message"
-    //         ]);
-    // }
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                "status",
+                "locale",
+                "message"
+            ]);
+    }
 
     public function test_register_api_exists()
     {
@@ -295,11 +293,25 @@ class AuthTest extends TestCase
             ]);
     }
 
+    public function test_register_api_register_validation_success()
+    {
+
+        $response = $this->post(route('auth.register'), [
+            'name' => 'sadsadsd',
+            'email' => 'son123@gmail.com',
+            'password' => '123',
+            'password_confirmation' => '123'
+        ]);
+
+        $response->assertStatus(201);
+    }
+
     public function test_register_api_register_failed()
     {
         $user = $this->createUser();
 
         $response = $this->post(route('auth.register'), [
+            'name' => 'son',
             'email' => $user->email
         ]);
 
@@ -311,6 +323,10 @@ class AuthTest extends TestCase
                 "message",
                 "errors"
             ]);
+
+        $this->assertDatabaseMissing('users', [
+            'name' => 'son'
+        ]);
 
         $response = $this->post(route('auth.register'), [
             'name' => 'sadsadsd',
@@ -327,14 +343,17 @@ class AuthTest extends TestCase
                 "message",
                 "errors"
             ]);
+
+        $this->assertDatabaseMissing('users', [
+            'email' => 'adasdasd'
+        ]);
     }
 
     public function test_register_api_register_success()
     {
-
         $response = $this->post(route('auth.register'), [
             'name' => 'sadsadsd',
-            'email' => 'asdsad@gmail.com',
+            'email' => 'son1234@gmail.com',
             'password' => '123',
             'password_confirmation' => '123'
         ]);
@@ -346,5 +365,9 @@ class AuthTest extends TestCase
                 "message",
                 "data"
             ]);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'son1234@gmail.com'
+        ]);
     }
 }

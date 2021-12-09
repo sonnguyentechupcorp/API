@@ -6,6 +6,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class Admin extends Command
@@ -42,17 +43,16 @@ class Admin extends Command
 
     public function handle()
     {
-
         $name = $this->ask(__('What is your name?'));
-        $email = $this->ask('What is your email?');
-        $password = $this->secret('What is your password?');
-        $birthDate = $this->ask('What is your birth date?');
+        $email = $this->ask(__('What is your email?'));
+        $password = $this->secret(__('What is your password?'));
+        $birthDate = $this->ask(__('What is your birth date?'));
         $gender = $this->choice(
-            'What is your gender?',
+            __('What is your gender?'),
             ['0', '1'],
         );
         $role = $this->choice(
-            'What is your role?',
+            __('What is your role?'),
             ['User', 'Admin', 'Editor'],
         );
 
