@@ -7,7 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
 // refactor
-class SendWelcomeEmailToUser extends Mailable
+class SendTotalNewUserTodayToAdmin extends Mailable
 {
     use Queueable, SerializesModels;
     public $user;
@@ -31,6 +31,6 @@ class SendWelcomeEmailToUser extends Mailable
     public function build()
     {
         return $this->subject('Welcome')
-                    ->view('emails.SendWelcomeEmailToUser');
+                    ->view('emails.SendTotalNewUserTodayToAdmin');
     }
 }

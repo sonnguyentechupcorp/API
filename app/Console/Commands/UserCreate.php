@@ -6,10 +6,9 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class Admin extends Command
+class UserCreate extends Command
 {
     /**
      * The name and signature of the console command.
@@ -59,29 +58,29 @@ class Admin extends Command
         $hasErrors = false;
 
         if (empty($name)) {
-            $this->error('The name is required!');
+            $this->error(__('The name is required!'));
             $hasErrors = true;
         }
 
         if (empty($email)) {
-            $this->error('The email is required!');
+            $this->error(__('The email is required!'));
             $hasErrors = true;
         } else {
             if (User::where('email', $email)->first()) {
-                $this->error('The email was be taken!');
+                $this->error(__('The email was be taken!'));
                 $hasErrors = true;
             }
         }
 
         if (empty($password)) {
-            $this->error('The password is required!');
+            $this->error(__('The password is required!'));
             $hasErrors = true;
         }
 
         try {
             Carbon::parse($birthDate);
         } catch (\Exception $exception) {
-            $this->error('Create user failed!:birthDate format error ');
+            $this->error(__('Create user failed!:birthDate format error '));
         }
 
         if (!$hasErrors) {
@@ -95,14 +94,13 @@ class Admin extends Command
                     'role' => $role
                 ]);
 
-
                 if ($isCreated) {
-                    $this->info('Created a new user successfully!');
+                    $this->info(__('Created a new user successfully!'));
                 }
             } catch (QueryException $exception) {
-                $this->error('Create user failed!: Database Query Error');
+                $this->error(__('Create user failed!: Database Query Error'));
             } catch (\Exception $exception) {
-                $this->error('Create user failed!: ' . $exception->getMessage());
+                $this->error(__('Create user failed!: ') . $exception->getMessage());
             }
         }
     }
