@@ -13,11 +13,14 @@ class Kernel extends ConsoleKernel
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
+    protected $commands = [
+        'App\Console\Commands\SendReport'
+    ];
+
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('demo:send-report admin@gmail.com')->daily()->appendOutputTo('CreateSchedule');
     }
-
     /**
      * Register the commands for the application.
      *

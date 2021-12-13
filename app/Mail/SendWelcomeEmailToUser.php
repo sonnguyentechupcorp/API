@@ -6,10 +6,10 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-// refactor
 class SendWelcomeEmailToUser extends Mailable
 {
     use Queueable, SerializesModels;
+    
     public $user;
 
     /**

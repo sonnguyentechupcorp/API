@@ -14,15 +14,14 @@ class SendReport extends Command
      *
      * @var string
      */
-    protected $signature = 'demo:send-report';
+    protected $signature = 'demo:send-report {email}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Send mail total new user today to the admin.
-    ';
+    protected $description = 'Send mail total new user today to the admin.';
 
     /**
      * Create a new command instance.
@@ -41,13 +40,18 @@ class SendReport extends Command
      */
     public function handle()
     {
+        $email = $this->argument('email');
+        $checkemail = '/(\w)@gmail\.com$/i';
+        $pregMatch = preg_match($checkemail, $email) ? $email : '';
 
-        $date = date('Y-m-d');
+        if ($email != $pregMatch) {
+            $this->error('Email format failed');
+        } else {
+            $user = User::whereDate('created_at', '=', date('Y-m-d'))->count();
 
-        $user = User::whereDate('created_at', '=', $date )->count();
+            Mail::to($email)->send(new SendTotalNewUserTodayToAdmin($user));
 
-        Mail::to('admin@gmail.com')->send(new SendTotalNewUserTodayToAdmin($user));
-
-        $this->info('The emails are send successfully!');
+            $this->info('The emails are send successfully!');
+        }
     }
 }
