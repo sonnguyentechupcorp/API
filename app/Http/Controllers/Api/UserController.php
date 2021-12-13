@@ -6,15 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
-use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
+    public function abc()
+    {
+        $value = Cache::get('key', function () {
+            return User::get();
+        });
+    }
 
     public function index()
     {
+
         $users = User::when(request('user_id'), function ($query) {
 
             return $query->where('id', request('user_id'));
