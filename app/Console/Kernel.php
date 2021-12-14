@@ -19,8 +19,9 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('demo:send-report admin@gmail.com')->daily()->appendOutputTo('CreateSchedule');
+        $schedule->command('demo:send-report admin@gmail.com')->everyMinute()->appendOutputTo('CreateSchedule');
     }
+
     /**
      * Register the commands for the application.
      *

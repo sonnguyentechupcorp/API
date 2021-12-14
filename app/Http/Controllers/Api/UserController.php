@@ -12,11 +12,12 @@ use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
-    public function abc()
+    public function abc($id)
     {
-        $value = Cache::get('key', function () {
-            return User::get();
+        $value = Cache::rememberForever('key_' . $id, function () use($id) {
+            return User::find($id);
         });
+        dd($value);
     }
 
     public function index()
@@ -94,53 +95,15 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit()
+    public function edit(UpdateUserRequest $request, $id)
     {
-        //
-    }
+        $users = User::FindorFail($id);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function updateAvatar(UpdateUserRequest $request, $id)
-    {
-        $users = User::find($id);
-
-        if(!$users){
-
-            return response([
-                'status' => false,
-                'locale' => app()->getLocale(),
-                'message' => __('User does not exist.'),
-            ], 404);
-        }
-
-        if($request->email){
-
-            return response([
-                'status' => false,
-                'locale' => app()->getLocale(),
-                'message' => __('Can not change email.'),
-            ], 404);
-        }
-
-        $users->name = $request->name;
-        $users->gender = $request->gender;
-        $users->birth_date = $request->birth_date;
-
-        if ($request->avatar != '') {
-            $image = $request->avatar;
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('upload'), $imageName);
-            $url = "upload/" . $imageName;
-            $users->update(['avatar' => $url]);
-        }
-
-        $users->save();
+        $users->update([
+            'name' => $request->get('name'),
+            'gender' => $request->get('gender'),
+            'birth_date' => $request->get('birth_date'),
+        ]);
 
         return response([
             'status' => true,
@@ -151,6 +114,40 @@ class UserController extends Controller
             ]
         ]);
     }
+
+    public function UpdateAvatar(UpdateUserRequest $request, $id)
+    {
+        $users = User::FindorFail($id);
+
+        $image = $request->avatar;
+        if (!empty($image)) {
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('upload'), $imageName);
+            $newAvatarUrl = "upload/" . $imageName;
+        }
+
+        $users->update([
+            'name' => $request->get('name'),
+            'avatar' => empty($newAvatarUrl) ? $users->avatar : $newAvatarUrl
+        ]);
+
+        return response([
+            'status' => true,
+            'locale' => app()->getLocale(),
+            'message' => __('Update success'),
+            'data' => [
+                'user' => $users
+            ]
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
 
     /**
      * Remove the specified resource from storage.

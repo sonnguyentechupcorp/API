@@ -471,14 +471,14 @@ class UserTest extends TestCase
 
     public function test_user_api_user_update_avatar_exists()
     {
-        $response = $this->post(route('user.update', [1]));
+        $response = $this->put(route('user.edit', [1]));
 
         $response->assertStatus(500);
     }
 
     public function test_user_api_user_update_avatar_none_authenticated()
     {
-        $response = $this->post(route('user.update', [1]), [], [
+        $response = $this->put(route('user.edit', [1]), [], [
             'Accept' => 'application/json',
             'Authorization' => ''
         ]);
@@ -495,7 +495,7 @@ class UserTest extends TestCase
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        $response = $this->post(route('user.update', [1]), [], [
+        $response = $this->put(route('user.edit', [1]), [], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
         ]);
@@ -509,7 +509,7 @@ class UserTest extends TestCase
                 "errors"
             ]);
 
-        $response = $this->post(route('user.update', [1]), [
+        $response = $this->put(route('user.edit', [1]), [
             'name' => ''
         ], [
             'Accept' => 'application/json',
@@ -532,7 +532,7 @@ class UserTest extends TestCase
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        $response = $this->post(route('user.update', ['sadasdasd']), [
+        $response = $this->put(route('user.edit', ['sadasdasd']), [
             'name' => $this->faker->name()
         ], [
             'Accept' => 'application/json',
@@ -541,9 +541,11 @@ class UserTest extends TestCase
 
         $response->assertStatus(404)
             ->assertJsonStructure([
-                "status",
-                "locale",
-                "message"
+                "message",
+                "exception",
+                "file",
+                "line",
+                "trace",
 
             ]);
     }
