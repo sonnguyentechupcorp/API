@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+//use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+
+class User extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use Authenticatable, HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +28,11 @@ class User extends Authenticatable
         'role',
         'avatar'
     ];
+
+    public function posts()
+    {
+        return $this->hasMany(Posts::class, 'author_id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.

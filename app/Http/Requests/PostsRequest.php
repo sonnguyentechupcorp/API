@@ -20,7 +20,7 @@ class PostsRequest extends AbstractRequest
     {
 
         return [
-            'title' => ["required" , "string"],
+            'title' => ['required', 'string', 'unique:posts'],
             'body' => ["required" , "string"],
             'avatar' => ['nullable', 'image']
         ];
