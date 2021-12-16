@@ -28,27 +28,22 @@ Route::group(['middleware' => ['auth:sanctum'], 'as' => 'user.'], function () {
 
     //User
     Route::get('/users', [UserController::class, 'index'])->name('index');
-    Route::post('/users', [UserController::class, 'store'])->name('store');
-    Route::get('/users/{id}', [UserController::class, 'show'])->name('show');
-    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('destroy');
-    Route::put('/edit/{id}', [UserController::class,'edit'])->name('edit');
-    Route::post('/updateAvatar/{id}', [UserController::class,'UpdateAvatar'])->name('updateAvatar');
+    Route::post('/user', [UserController::class, 'store'])->name('store');
+    Route::get('/user/{id}', [UserController::class, 'show'])->name('show');
+    Route::delete('/deleteUser/{id}', [UserController::class, 'destroy'])->name('destroy');
+    Route::put('/editUser/{id}', [UserController::class,'edit'])->name('edit');
 
     //Posts
     Route::get('/posts', [PostsController::class, 'index'])->name('indexPosts');
-    Route::post('/posts', [PostsController::class, 'store'])->name('storePosts');
+    Route::post('/post', [PostsController::class, 'store'])->name('storePost');
+    Route::put('/editPost/{id}', [PostsController::class, 'edit'])->name('editPost');
+    Route::delete('/deletePost/{id}', [PostsController::class, 'destroy'])->name('destroyPost');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout')->middleware('auth:sanctum');
 Route::post('/register', [RegisterController::class, 'register'])->name('auth.register');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 
-// Test cache
-Route::get('/abc/{id}', [UserController::class, 'abc']);
-// Route::get('/users', [UserController::class, 'index'])->name('index');
-// Route::get('/users/{id}', [UserController::class, 'show'])->name('show');
-// Route::get('/userss/{id}', [UserController::class, 'destroy'])->name('destroy');
-//Route::get('/edit/{id}', [UserController::class,'edit'])->name('edit');
 
 
 

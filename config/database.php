@@ -120,7 +120,7 @@ return [
     'redis' => [
 
         // 'client' => env('REDIS_CLIENT', 'phpredis'),
-        'client' => env('REDIS_CLIENT', 'predis'), // config redis
+        'client' => env('REDIS_CLIENT', 'predis'), // config  cache redis
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),

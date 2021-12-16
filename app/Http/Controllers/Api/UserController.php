@@ -11,42 +11,32 @@ use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
-    public function abc($id)
-    {
-        $value = Cache::rememberForever('key_' . $id, function () use ($id) {
-            return User::find($id);
-        });
-        dd($value);
-    }
 
     public function index()
     {
+        $page = request()->get('page', 1);
+        $perPage = request()->get('per_page', 2);
+        $keyword = request()->get('keyword');
 
-        $value = Cache::rememberForever('key', function () {
+        $cacheKey = "index_page_{$page}_per_page_{$perPage}_keyword_{$keyword}";
 
-            $users = User::when(request('user_id'), function ($query) {
+        $users = Cache::tags(['user_index'])->rememberForever($cacheKey, function () use ($perPage, $keyword) {
 
-                return $query->where('id', request('user_id'));
-            })->when(request('name'), function ($query) {
+            return User::when($keyword, function ($query) use($keyword) {
 
-                return $query->where('name', request('name'));
-            })->paginate(2);
-
-            return response()->json([
-                'status' => true,
-                'message' => __('List'),
-                'data' => $users
-            ], 200);
+                return $query->where('name', 'like', '%'. $keyword . '%');
+            })->paginate($perPage);
         });
 
-        Cache::forget('key');
-
-        return $value;
+        return response()->json([
+            'status' => true,
+            'message' => __('List'),
+            'data' => $users
+        ], 200);
     }
 
     public function store(UserRequest $request)
     {
-
         $user = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
@@ -74,32 +64,16 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $value = Cache::rememberForever('key_' . $id, function () use ($id) {
+        $user = $this->getUserById($id);
 
-            $users = User::find($id);
-
-            if (!$users) {
-
-                return response([
-                    'status' => false,
-                    'locale' => app()->getLocale(),
-                    'message' => __('User does not exist.'),
-                ], 404);
-            }
-
-            return response([
-                'status' => true,
-                'locale' => app()->getLocale(),
-                'message' => __('User information.'),
-                'data' => [
-                    'user' => $users
-                ]
-            ], 200);
-        });
-
-        Cache::forget('key_' . $id);
-
-        return $value;
+        return response([
+            'status' => true,
+            'locale' => app()->getLocale(),
+            'message' => __('User information.'),
+            'data' => [
+                'user' => $user
+            ]
+        ], 200);
     }
     /**
      * Show the form for editing the specified resource.
@@ -110,62 +84,33 @@ class UserController extends Controller
 
     public function edit(UpdateUserRequest $request, $id)
     {
+        $user = $this->getUserById($id);
 
-        $value = Cache::rememberForever('key_' . $id, function () use ($id, $request) {
+        $image = $request->avatar;
+        if (!empty($image)) {
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('upload'), $imageName);
+            $newAvatarUrl = "upload/" . $imageName;
+        }
 
-            $users = User::FindorFail($id);
+        $user->update([
+            'name' => $request->get('name', $user->name),
+            'gender' => $request->get('gender', $user->gender),
+            'birth_date' => $request->get('birth_date', $user->birth_date),
+            'avatar' => empty($newAvatarUrl) ? $user->avatar : $newAvatarUrl
+        ]);
 
-            $users->update([
-                'name' => $request->get('name'),
-                'gender' => $request->get('gender'),
-                'birth_date' => $request->get('birth_date'),
-            ]);
+        Cache::put('user_' . $id, $user);
+        Cache::tags(['user_index'])->flush();
 
-            return response([
-                'status' => true,
-                'locale' => app()->getLocale(),
-                'message' => __('Update success'),
-                'data' => [
-                    'user' => $users
-                ]
-            ]);
-        });
-
-        Cache::forget('key_' . $id);
-
-        return $value;
-    }
-
-    public function UpdateAvatar(UpdateUserRequest $request, $id)
-    {
-        $value = Cache::rememberForever('key_' . $id, function () use ($id, $request) {
-            $users = User::FindorFail($id);
-
-            $image = $request->avatar;
-            if (!empty($image)) {
-                $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('upload'), $imageName);
-                $newAvatarUrl = "upload/" . $imageName;
-            }
-
-            $users->update([
-                'name' => $request->get('name'),
-                'avatar' => empty($newAvatarUrl) ? $users->avatar : $newAvatarUrl
-            ]);
-
-            return response([
-                'status' => true,
-                'locale' => app()->getLocale(),
-                'message' => __('Update success'),
-                'data' => [
-                    'user' => $users
-                ]
-            ]);
-        });
-
-        Cache::forget('key_' . $id);
-
-        return $value;
+        return response([
+            'status' => true,
+            'locale' => app()->getLocale(),
+            'message' => __('Update success'),
+            'data' => [
+                'user' => $user
+            ]
+        ]);
     }
 
     /**
@@ -185,29 +130,28 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $value = Cache::rememberForever('key_' . $id, function () use ($id) {
-            $users = User::find($id);
+        $user = $this->getUserById($id);
 
-            if ($users) {
-                $users->delete();
+        $user->delete();
 
-                return response([
-                    'status' => true,
-                    'locale' => app()->getLocale(),
-                    'message' => __('Delete user successfully!'),
-                ], 200);
-            } else {
+        Cache::forget('user_' . $id);
+        Cache::tags(['user_index'])->flush();
 
-                return response([
-                    'status' => false,
-                    'locale' => app()->getLocale(),
-                    'message' => __('Users do not exist.'),
-                ], 404);
-            }
+        return response([
+            'status' => true,
+            'locale' => app()->getLocale(),
+            'message' => __('Delete user successfully!'),
+        ], 200);
+    }
+
+    /**
+     * @param  int  $id
+     * @return \App\Models\User
+     */
+    protected function getUserById($id)
+    {
+        return Cache::rememberForever('user_' . $id, function () use ($id) {
+            return User::findOrFail($id);
         });
-
-        Cache::forget('key_' . $id);
-
-        return $value;
     }
 }
