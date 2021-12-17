@@ -93,10 +93,11 @@ class UserTest extends TestCase
 
         $response->assertStatus(404)
             ->assertJsonStructure([
-                "status",
-                "locale",
-                "message"
-
+                "message",
+                "exception",
+                "file",
+                "line",
+                "trace"
             ]);
 
         $response = $this->get(route('user.show', ['0']), [
@@ -106,10 +107,11 @@ class UserTest extends TestCase
 
         $response->assertStatus(404)
             ->assertJsonStructure([
-                "status",
-                "locale",
-                "message"
-
+                "message",
+                "exception",
+                "file",
+                "line",
+                "trace"
             ]);
     }
 
@@ -164,7 +166,7 @@ class UserTest extends TestCase
 
     public function test_user_api_user_store_exists()
     {
-        $response = $this->get(route('user.store'));
+        $response = $this->post(route('user.store'));
 
         $response->assertStatus(500);
     }
@@ -418,32 +420,35 @@ class UserTest extends TestCase
 
         $response->assertStatus(404)
             ->assertJsonStructure([
-                "status",
-                "locale",
-                "message"
-
+                "message",
+                "exception",
+                "file",
+                "line",
+                "trace"
             ]);
 
         $this->assertDatabaseMissing('users', [
             'id' => 'sadsad'
         ]);
 
-        $response = $this->delete(route('user.destroy', ['0']), [
+        $response = $this->delete(route('user.destroy', ['0']), [], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
         ]);
 
         $response->assertStatus(404)
             ->assertJsonStructure([
-                "status",
-                "locale",
-                "message"
-
+                "message",
+                "exception",
+                "file",
+                "line",
+                "trace"
             ]);
 
         $this->assertDatabaseMissing('users', [
             'id' => '0'
         ]);
+
     }
 
     public function test_user_api_user_destroy_an_authenticated_success()
@@ -500,13 +505,13 @@ class UserTest extends TestCase
             'Authorization' => 'Bearer ' . $token
         ]);
 
-        $response->assertStatus(422)
+        $response->assertStatus(404)
             ->assertJsonStructure([
-                "status",
-                "code",
-                "locale",
                 "message",
-                "errors"
+                "exception",
+                "file",
+                "line",
+                "trace"
             ]);
 
         $response = $this->put(route('user.edit', [1]), [

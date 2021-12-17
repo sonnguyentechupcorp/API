@@ -35,7 +35,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'as' => 'user.'], function () {
 
     //Posts
     Route::get('/posts', [PostsController::class, 'index'])->name('indexPosts');
-    Route::post('/post', [PostsController::class, 'store'])->name('storePost');
+    Route::post('/post/{id}', [PostsController::class, 'store'])->name('storePost');
     Route::put('/editPost/{id}', [PostsController::class, 'edit'])->name('editPost');
     Route::delete('/deletePost/{id}', [PostsController::class, 'destroy'])->name('destroyPost');
 });
@@ -43,6 +43,8 @@ Route::group(['middleware' => ['auth:sanctum'], 'as' => 'user.'], function () {
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout')->middleware('auth:sanctum');
 Route::post('/register', [RegisterController::class, 'register'])->name('auth.register');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+Route::get('/test', [PostsController::class, 'test'])->name('indexPosts');
+
 
 
 

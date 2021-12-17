@@ -10,16 +10,19 @@ use App\Models\User;
 
 class PostsController extends Controller
 {
+    public function test()
+    {
+        $user = User::find(2)->posts;
+        dd($user);
+        // $user = Posts::find(2);
+        // dd($user);
+
+    }
 
     public function index()
     {
-        $user = User::find(70)->posts;
-        dd($user);
 
-        $posts = Posts::when(request('posts_id'), function ($query) {
-
-            return $query->where('id', request('posts_id'));
-        })->when(request('title'), function ($query) {
+        $posts = Posts::when(request('title'), function ($query) {
 
             return $query->where('title', request('title'));
         })->paginate(2);
@@ -31,12 +34,14 @@ class PostsController extends Controller
         ], 200);
     }
 
-    public function store(PostsRequest $request)
+    public function store(PostsRequest $request, $id)
     {
 
         $posts = Posts::create([
             'title' => $request->input('title'),
             'body' => $request->input('body'),
+            'author_id' => $request->input('author_id'),
+
         ]);
 
         return response([
@@ -63,6 +68,7 @@ class PostsController extends Controller
         $post->update([
             'title' => $request->get('title', $post->title),
             'body' => $request->get('body', $post->body),
+            'author_id' => $request->get('author_id', $post->author_id),
             'feature_img' => empty($newAvatarUrl) ? $post->feature_img : $newAvatarUrl
         ]);
 

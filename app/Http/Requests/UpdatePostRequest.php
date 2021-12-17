@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+
 class UpdatePostRequest extends AbstractRequest
 {
 
@@ -14,9 +15,10 @@ class UpdatePostRequest extends AbstractRequest
     public function rules()
     {
         return [
-            'title' => ['required', 'string', 'min:1', 'max:255', 'unique:posts'],
+            'title' => ['string', 'min:1', 'max:255', 'unique:posts'],
             'avatar' => ['nullable', 'image'],
             'body' => ['nullable', 'string'],
+            'author_id' => ['numeric', 'min:1'],
         ];
     }
 }

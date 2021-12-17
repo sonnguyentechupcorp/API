@@ -3,22 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-//use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Auth\Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
 
-class User extends Model
+class User extends Authenticatable
 {
-    use Authenticatable, HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var string[]
      */
+
     protected $fillable = [
         'name',
         'email',
@@ -31,7 +30,7 @@ class User extends Model
 
     public function posts()
     {
-        return $this->hasMany(Posts::class, 'author_id');
+        return $this->hasMany(Posts::class, 'author_id', 'id');
     }
 
     /**
@@ -54,5 +53,4 @@ class User extends Model
         'birth_date' => 'date',
         'role' => 'array'
     ];
-
 }
