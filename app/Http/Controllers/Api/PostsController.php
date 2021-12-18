@@ -34,7 +34,7 @@ class PostsController extends Controller
         ], 200);
     }
 
-    public function store(PostsRequest $request, $id)
+    public function store(PostsRequest $request)
     {
 
         $posts = Posts::create([

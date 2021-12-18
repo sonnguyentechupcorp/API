@@ -42,13 +42,13 @@ class PostDatabaseTest extends TestCase
 
     public function test_insert_data_to_database_failed()
     {
-        $title = $this->faker->title();
+       $title = $this->faker->title();
 
         try {
             Posts::create([
                 'title' => $title,
                 'body' =>'abc',
-                'author_id' => '1'
+                'author_id' => ''
 
             ]);
         } catch (\Exception $e) {
@@ -59,64 +59,18 @@ class PostDatabaseTest extends TestCase
 
         try {
             Posts::create([
-                'title' =>  $this->faker->title(),
-                'body' =>'abc',
-                'author_id' => ''
+                'title' => $title,
+                'body' =>'cccccc',
+                'author_id' => 'sadsad'
 
             ]);
         } catch (\Exception $e) {
             $this->assertDatabaseMissing('posts', [
-                'author_id' => ''
+                'title' => $title
             ]);
         }
+
     }
-
-
-    //     try {
-    //         User::create([
-    //             'name' => $name,
-    //             'email' => $this->faker->email(),
-    //             'password' => '123456',
-    //             'birth_date' => '',
-    //             'gender' => 1,
-    //             'role' => ["User"],
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         $this->assertDatabaseMissing('users', [
-    //             'name' => $name
-    //         ]);
-    //     }
-
-    //     try {
-    //         User::create([
-    //             'name' => $name,
-    //             'email' => $this->faker->email(),
-    //             'password' => '123456',
-    //             'birth_date' => Carbon::parse('1998-10-10'),
-    //             'gender' => '',
-    //             'role' => ["User"],
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         $this->assertDatabaseMissing('users', [
-    //             'name' => $name
-    //         ]);
-    //     }
-
-    //     try {
-    //         User::create([
-    //             'name' => $name,
-    //             'email' => '',
-    //             'password' => '123456',
-    //             'birth_date' => Carbon::parse('1998-10-10'),
-    //             'gender' => 1,
-    //             'role' => ["User"],
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         $this->assertDatabaseMissing('users', [
-    //             'name' => $name
-    //         ]);
-    //     }
-
 
     public function test_update_data_to_database_success()
     {
@@ -129,32 +83,24 @@ class PostDatabaseTest extends TestCase
         $this->assertModelExists($post);
     }
 
-    // public function test_update_data_to_database_failed()
-    // {
-    //     $user = $this->createUser();
+    public function test_update_data_to_database_failed()
+    {
+        $post = $this->createPost();
 
-    //     try {
-    //         $updateStatus = $user->update(['birth_date' => '']);
+        try {
+            $updateStatus = $post->update(['title' => '']);
 
-    //         $this->assertFalse($updateStatus);
-    //     } catch (\Exception $e) {
-    //         $this->assertTrue(true);
-    //     }
+            $this->assertFalse($updateStatus);
+        } catch (\Exception $e) {
+            $this->assertTrue(true);
+        }
 
-    //     try {
-    //         $updateStatus = $user->update(['email' => '']);
+        try {
+            $updateStatus = $post->update(['author_id' => '']);
 
-    //         $this->assertFalse($updateStatus);
-    //     } catch (\Exception $e) {
-    //         $this->assertTrue(true);
-    //     }
-
-    //     try {
-    //         $updateStatus = $user->update(['gender' => '']);
-
-    //         $this->assertFalse($updateStatus);
-    //     } catch (\Exception $e) {
-    //         $this->assertTrue(true);
-    //     }
-
+            $this->assertFalse($updateStatus);
+        } catch (\Exception $e) {
+            $this->assertTrue(true);
+        }
+    }
 }

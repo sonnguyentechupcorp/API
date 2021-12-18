@@ -21,8 +21,7 @@ class PostsRequest extends AbstractRequest
 
         return [
             'title' => ['required', 'string', 'unique:posts'],
-            'body' => ["required" , "string"],
-            'avatar' => ['nullable', 'image'],
+            'body' => ['nullable', 'string'],
             'author_id' => ['required', 'numeric', 'min:1'],
         ];
     }
