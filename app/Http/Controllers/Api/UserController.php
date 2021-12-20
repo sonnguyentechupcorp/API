@@ -18,7 +18,7 @@ class UserController extends Controller
         $perPage = request()->get('per_page', 2);
         $keyword = request()->get('keyword');
 
-        $cacheKey = "index_page_{$page}_per_page_{$perPage}_keyword_{$keyword}";
+        $cacheKey = "user_index_page_{$page}_per_page_{$perPage}_keyword_{$keyword}";
 
         $users = Cache::tags(['user_index'])->rememberForever($cacheKey, function () use ($perPage, $keyword) {
 
@@ -45,6 +45,9 @@ class UserController extends Controller
             'birth_date' => $request->input('birth_date'),
             'password' => Hash::make($request->password),
         ]);
+
+        Cache::put('user_' . $user->id, $user);
+        Cache::tags(['user_index'])->flush();
 
         return response([
             'status' => true,

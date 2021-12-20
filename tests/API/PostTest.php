@@ -208,231 +208,272 @@ class PostTest extends TestCase
             ]);
     }
 
-    // public function test_post_api_post_store_an_authenticated_create_failed()
-    // {
-    //     $title = 'abc';
+    public function test_post_api_post_store_an_authenticated_create_failed()
+    {
+        $post = $this->createPost();
 
-    //     $user = $this->createUser();
+        $user = $this->createUser();
 
-    //     $token = $user->createToken('myapptoken')->plainTextToken;
+        $token = $user->createToken('myapptoken')->plainTextToken;
 
-    //     $response = $this->post(route('user.storePost'), [
-    //         'title' => $title,
-    //         'body' => 'abc',
-    //         'author_id' => '1'
-    //     ], [
-    //         'Accept' => 'application/json',
-    //         'Authorization' => 'Bearer ' . $token
-    //     ]);
+        $response = $this->post(route('user.storePost'), [
+            'title' => $post->title,
+            'body' => 'bbb',
+            'author_id' => '1'
+        ], [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ]);
 
-    //     $response->assertStatus(422)
-    //         ->assertJsonStructure([
-    //             "status",
-    //             "code",
-    //             "locale",
-    //             "message",
-    //             "errors"
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                "status",
+                "code",
+                "locale",
+                "message",
+                "errors"
 
-    //         ]);
+            ]);
 
-    //     $this->assertDatabaseMissing('users', [
-    //         'title' => $title
-    //     ]);
-    // }
+        $this->assertDatabaseMissing('posts', [
+            'body' => 'bbb'
+        ]);
 
-    // public function test_post_api_post_store_an_authenticated_create_success()
-    // {
-    //     $user = $this->createPost();
+        $response = $this->post(route('user.storePost'), [
+            'title' => 'kkk',
+            'body' => 'bbbb',
+            'author_id' => '0'
+        ], [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ]);
 
-    //     $token = $user->createToken('myapptoken')->plainTextToken;
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                "status",
+                "code",
+                "locale",
+                "message",
+                "errors"
 
-    //     $response = $this->post(route('user.store'), [
-    //         'name' => $this->faker->name(),
-    //         'email' => 'son',
-    //         'password' => '123'
-    //     ], [
-    //         'Accept' => 'application/json',
-    //         'Authorization' => 'Bearer ' . $token
-    //     ]);
+            ]);
 
-    //     $response->assertStatus(201)
-    //         ->assertJsonStructure([
-    //             "status",
-    //             "locale",
-    //             "message",
-    //             "data"
-    //         ]);
+        $this->assertDatabaseMissing('posts', [
+            'body' => 'bbbb'
+        ]);
+    }
 
-    //     $this->assertDatabaseHas('users', [
-    //         'email' => 'son'
-    //     ]);
-    // }
+    public function test_post_api_post_store_an_authenticated_create_success()
+    {
+        $user = $this->createUser();
 
-    // public function test_post_api_post_destroy_exists()
-    // {
-    //     $response = $this->delete(route('user.destroy', [1]));
+        $token = $user->createToken('myapptoken')->plainTextToken;
 
-    //     $response->assertStatus(500);
-    // }
+        $response = $this->post(route('user.storePost'), [
+            'title' => 'am',
+            'body' => 'abc',
+            'author_id' => '2'
+        ], [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ]);
 
-    // public function test_post_api_post_destroy_none_authenticated()
-    // {
-    //     $response = $this->delete(route('user.destroy', [1]), [], [
-    //         'Accept' => 'application/json',
-    //         'Authorization' => ''
-    //     ]);
+        $response->assertStatus(201)
+            ->assertJsonStructure([
+                "status",
+                "locale",
+                "message",
+                "data"
+            ]);
 
-    //     $response->assertStatus(401)
-    //         ->assertJsonStructure([
-    //             "message",
-    //         ]);
-    // }
+        $this->assertDatabaseHas('posts', [
+            'body' => 'abc'
+        ]);
+    }
 
-    // public function test_post_api_post_destroy_an_authenticated_failed()
-    // {
-    //     $user = $this->createPost();
+    public function test_post_api_post_update_exists()
+    {
+        $response = $this->put(route('user.editPost', [1]));
 
-    //     $token = $user->createToken('myapptoken')->plainTextToken;
+        $response->assertStatus(500);
+    }
 
-    //     $response = $this->delete(route('user.destroy', ['sadsad']), [], [
-    //         'Accept' => 'application/json',
-    //         'Authorization' => 'Bearer ' . $token
-    //     ]);
+    public function test_post_api_post_update_none_authenticated()
+    {
+        $response = $this->put(route('user.editPost', [1]), [], [
+            'Accept' => 'application/json',
+            'Authorization' => ''
+        ]);
 
-    //     $response->assertStatus(404)
-    //         ->assertJsonStructure([
-    //             "message",
-    //             "exception",
-    //             "file",
-    //             "line",
-    //             "trace"
-    //         ]);
+        $response->assertStatus(401)
+            ->assertJsonStructure([
+                "message",
+            ]);
+    }
 
-    //     $this->assertDatabaseMissing('users', [
-    //         'id' => 'sadsad'
-    //     ]);
+    public function test_post_api_post_update_an_authenticated_validation_failed()
+    {
+        $user = $this->createUser();
 
-    //     $response = $this->delete(route('user.destroy', ['0']), [], [
-    //         'Accept' => 'application/json',
-    //         'Authorization' => 'Bearer ' . $token
-    //     ]);
+        $token = $user->createToken('myapptoken')->plainTextToken;
 
-    //     $response->assertStatus(404)
-    //         ->assertJsonStructure([
-    //             "message",
-    //             "exception",
-    //             "file",
-    //             "line",
-    //             "trace"
-    //         ]);
+        $response = $this->put(route('user.editPost', [1]), [
+            'title' => ''
+        ], [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ]);
 
-    //     $this->assertDatabaseMissing('users', [
-    //         'id' => '0'
-    //     ]);
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                "status",
+                "code",
+                "locale",
+                "message",
+                "errors"
+            ]);
 
-    // }
+        $response = $this->put(route('user.editPost', [1]), [
+            'author_id' => ''
+        ], [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ]);
 
-    // public function test_post_api_post_destroy_an_authenticated_success()
-    // {
-    //     $user = $this->createPost();
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                "status",
+                "code",
+                "locale",
+                "message",
+                "errors"
+            ]);
 
-    //     $token = $user->createToken('myapptoken')->plainTextToken;
+        $response = $this->put(route('user.editPost', [1]), [
+            'author_id' => 'asdsad'
+        ], [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ]);
 
-    //     $response = $this->delete(route('user.destroy', ['1']), [], [
-    //         'Accept' => 'application/json',
-    //         'Authorization' => 'Bearer ' . $token
-    //     ]);
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                "status",
+                "code",
+                "locale",
+                "message",
+                "errors"
+            ]);
+    }
 
-    //     $response->assertStatus(200)
-    //         ->assertJsonStructure([
-    //             "status",
-    //             "locale",
-    //             "message",
-    //         ]);
+    public function test_post_api_post_update_avatar_an_authenticated_validation_success()
+    {
 
-    //     $this->assertDatabaseMissing('users', [
-    //         'id' => '1'
-    //     ]);
-    // }
+        $user = $this->createUser();
 
-    // public function test_post_api_post_update_avatar_exists()
-    // {
-    //     $response = $this->put(route('user.edit', [1]));
+        $token = $user->createToken('myapptoken')->plainTextToken;
 
-    //     $response->assertStatus(500);
-    // }
+        $response = $this->put(route('user.editPost', ['1']), [
+            'title' => $this->faker->name(),
+            'body' => 'lll',
+            'author_id' => '1'
+        ], [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ]);
 
-    // public function test_post_api_post_update_avatar_none_authenticated()
-    // {
-    //     $response = $this->put(route('user.edit', [1]), [], [
-    //         'Accept' => 'application/json',
-    //         'Authorization' => ''
-    //     ]);
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                "status",
+                "locale",
+                "message",
+                "data",
+            ]);
+    }
 
-    //     $response->assertStatus(401)
-    //         ->assertJsonStructure([
-    //             "message",
-    //         ]);
-    // }
+    public function test_post_api_post_destroy_exists()
+    {
+        $response = $this->delete(route('user.destroyPost', [1]));
 
-    // public function test_post_api_post_update_avatar_an_authenticated_validation_failed()
-    // {
-    //     $user = $this->createPost();
+        $response->assertStatus(500);
+    }
 
-    //     $token = $user->createToken('myapptoken')->plainTextToken;
+    public function test_post_api_post_destroy_none_authenticated()
+    {
+        $response = $this->delete(route('user.destroyPost', [1]), [], [
+            'Accept' => 'application/json',
+            'Authorization' => ''
+        ]);
 
-    //     $response = $this->put(route('user.edit', [1]), [], [
-    //         'Accept' => 'application/json',
-    //         'Authorization' => 'Bearer ' . $token
-    //     ]);
+        $response->assertStatus(401)
+            ->assertJsonStructure([
+                "message",
+            ]);
+    }
 
-    //     $response->assertStatus(404)
-    //         ->assertJsonStructure([
-    //             "message",
-    //             "exception",
-    //             "file",
-    //             "line",
-    //             "trace"
-    //         ]);
+    public function test_post_api_post_destroy_an_authenticated_failed()
+    {
+        $user = $this->createUser();
 
-    //     $response = $this->put(route('user.edit', [1]), [
-    //         'name' => ''
-    //     ], [
-    //         'Accept' => 'application/json',
-    //         'Authorization' => 'Bearer ' . $token
-    //     ]);
+        $token = $user->createToken('myapptoken')->plainTextToken;
 
-    //     $response->assertStatus(422)
-    //         ->assertJsonStructure([
-    //             "status",
-    //             "code",
-    //             "locale",
-    //             "message",
-    //             "errors"
-    //         ]);
-    // }
+        $response = $this->delete(route('user.destroy', ['sadsad']), [], [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ]);
 
-    // public function test_post_api_post_update_avatar_an_authenticated_validation_success()
-    // {
-    //     $user = $this->createPost();
+        $response->assertStatus(404)
+            ->assertJsonStructure([
+                "message",
+                "exception",
+                "file",
+                "line",
+                "trace"
+            ]);
 
-    //     $token = $user->createToken('myapptoken')->plainTextToken;
+        $this->assertDatabaseMissing('users', [
+            'id' => 'sadsad'
+        ]);
 
-    //     $response = $this->put(route('user.edit', ['sadasdasd']), [
-    //         'name' => $this->faker->name()
-    //     ], [
-    //         'Accept' => 'application/json',
-    //         'Authorization' => 'Bearer ' . $token
-    //     ]);
+        $response = $this->delete(route('user.destroy', ['0']), [], [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ]);
 
-    //     $response->assertStatus(404)
-    //         ->assertJsonStructure([
-    //             "message",
-    //             "exception",
-    //             "file",
-    //             "line",
-    //             "trace",
+        $response->assertStatus(404)
+            ->assertJsonStructure([
+                "message",
+                "exception",
+                "file",
+                "line",
+                "trace"
+            ]);
 
-    //         ]);
-    // }
+        $this->assertDatabaseMissing('users', [
+            'id' => '0'
+        ]);
+    }
+
+    public function test_post_api_post_destroy_an_authenticated_success()
+    {
+        $user = $this->createUser();
+
+        $token = $user->createToken('myapptoken')->plainTextToken;
+
+        $response = $this->delete(route('user.destroyPost', ['1']), [], [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                "status",
+                "locale",
+                "message",
+            ]);
+
+        $this->assertDatabaseMissing('posts', [
+            'id' => '1'
+        ]);
+    }
 }

@@ -16,7 +16,7 @@ class PostDatabaseTest extends TestCase
     {
         return Posts::create([
             'title' => $this->faker->title(),
-            'body' => 'abc',
+            'body' => 'a',
             'author_id' => '1'
         ]);
     }
@@ -42,34 +42,72 @@ class PostDatabaseTest extends TestCase
 
     public function test_insert_data_to_database_failed()
     {
-       $title = $this->faker->title();
+        $post = $this->createPost();
 
         try {
             Posts::create([
-                'title' => $title,
-                'body' =>'abc',
+                'title' => '',
+                'body' => 'ab',
+                'author_id' => '1'
+
+            ]);
+        } catch (\Exception $e) {
+            $this->assertDatabaseMissing('posts', [
+                'title' => ''
+            ]);
+        }
+
+        try {
+            Posts::create([
+                'title' => $post->title,
+                'body' => 'ab',
+                'author_id' => '1'
+
+            ]);
+        } catch (\Exception $e) {
+            $this->assertDatabaseMissing('posts', [
+                'title' => 'ab'
+            ]);
+        }
+
+        try {
+            Posts::create([
+                'title' => 'bbmm',
+                'body' => 'ab',
                 'author_id' => ''
 
             ]);
         } catch (\Exception $e) {
             $this->assertDatabaseMissing('posts', [
-                'title' => $title
+                'title' => 'bbmm'
             ]);
         }
 
         try {
             Posts::create([
-                'title' => $title,
-                'body' =>'cccccc',
+                'title' => 'bbnn',
+                'body' => 'abc',
                 'author_id' => 'sadsad'
 
             ]);
         } catch (\Exception $e) {
             $this->assertDatabaseMissing('posts', [
-                'title' => $title
+                'title' => 'bbnn'
             ]);
         }
 
+        try {
+            Posts::create([
+                'title' => 'aaa',
+                'body' => 'abcd',
+                'author_id' => '0'
+
+            ]);
+        } catch (\Exception $e) {
+            $this->assertDatabaseMissing('posts', [
+                'title' => 'aaa'
+            ]);
+        }
     }
 
     public function test_update_data_to_database_success()
@@ -97,6 +135,22 @@ class PostDatabaseTest extends TestCase
 
         try {
             $updateStatus = $post->update(['author_id' => '']);
+
+            $this->assertFalse($updateStatus);
+        } catch (\Exception $e) {
+            $this->assertTrue(true);
+        }
+
+        try {
+            $updateStatus = $post->update(['author_id' => 'sdsadad']);
+
+            $this->assertFalse($updateStatus);
+        } catch (\Exception $e) {
+            $this->assertTrue(true);
+        }
+
+        try {
+            $updateStatus = $post->update(['author_id' => '0']);
 
             $this->assertFalse($updateStatus);
         } catch (\Exception $e) {

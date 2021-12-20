@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\PostsController;
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\UserController;
@@ -30,14 +31,20 @@ Route::group(['middleware' => ['auth:sanctum'], 'as' => 'user.'], function () {
     Route::get('/users', [UserController::class, 'index'])->name('index');
     Route::post('/user', [UserController::class, 'store'])->name('store');
     Route::get('/user/{id}', [UserController::class, 'show'])->name('show');
-    Route::delete('/deleteUser/{id}', [UserController::class, 'destroy'])->name('destroy');
     Route::put('/editUser/{id}', [UserController::class,'edit'])->name('edit');
+    Route::delete('/deleteUser/{id}', [UserController::class, 'destroy'])->name('destroy');
 
     //Posts
     Route::get('/posts', [PostsController::class, 'index'])->name('indexPosts');
     Route::post('/post', [PostsController::class, 'store'])->name('storePost');
     Route::put('/editPost/{id}', [PostsController::class, 'edit'])->name('editPost');
     Route::delete('/deletePost/{id}', [PostsController::class, 'destroy'])->name('destroyPost');
+
+    //Categories
+    Route::get('/categories', [CategoryController::class, 'index'])->name('indexCategories');
+    Route::post('/category', [CategoryController::class, 'store'])->name('storeCategory');
+    Route::put('/editCategory/{id}', [CategoryController::class, 'edit'])->name('editCategory');
+    Route::delete('/deleteCategory/{id}', [CategoryController::class, 'destroy'])->name('destroyCategory');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout')->middleware('auth:sanctum');
@@ -46,6 +53,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 
 //Test
 Route::get('/test', [PostsController::class, 'test'])->name('indexPosts');
+
 
 
 

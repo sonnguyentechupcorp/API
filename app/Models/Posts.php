@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Posts extends Model
 {
     use HasFactory;
+
     protected $table = "posts";
+
     protected $fillable = [
         'title',
         'body',
@@ -17,4 +19,8 @@ class Posts extends Model
         'deleted_at',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'author_id');
+    }
 }
