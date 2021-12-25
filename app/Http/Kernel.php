@@ -42,6 +42,7 @@ class Kernel extends HttpKernel
         'api' => [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
+            'language', // Use For all API
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
@@ -61,8 +62,9 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        // 'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequestsWithRedis::class, //use Redis
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        //'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequestsWithRedis::class, //use Redis
+        'language' => \App\Http\Middleware\Localization::class, // change language
     ];
 }

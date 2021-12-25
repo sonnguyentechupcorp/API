@@ -2,13 +2,13 @@
 
 namespace Tests\API;
 
-use App\Models\Posts;
+use App\Models\Category;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
-class PostTest extends TestCase
+class CategoryTest extends TestCase
 {
 
     protected function createUser()
@@ -23,25 +23,24 @@ class PostTest extends TestCase
         ]);
     }
 
-    protected function createPost()
+    protected function createCategory()
     {
-        return Posts::create([
-            'title' => $this->faker->title(),
-            'body' => 'abc',
-            'author_id' => 1,
+        return Category::create([
+            'name' => $this->faker->name(),
+            'slug' => $this->faker->slug(),
         ]);
     }
 
-    public function test_post_api_post_index_exists()
+    public function test_category_api_category_index_exists()
     {
-        $response = $this->get(route('post.index'));
+        $response = $this->get(route('category.index'));
 
         $response->assertStatus(500);
     }
 
-    public function test_post_api_post_index_none_authenticated()
+    public function test_category_api_category_index_none_authenticated()
     {
-        $response = $this->get(route('post.index'), [
+        $response = $this->get(route('category.index'), [
             'Accept' => 'application/json',
             'Authorization' => ''
         ]);
@@ -52,13 +51,13 @@ class PostTest extends TestCase
             ]);
     }
 
-    public function test_post_api_post_index_an_authenticated()
+    public function test_category_api_category_index_an_authenticated()
     {
         $user = $this->createUser();
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        $response = $this->get(route('post.index'), [
+        $response = $this->get(route('category.index'), [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
         ]);
@@ -71,16 +70,16 @@ class PostTest extends TestCase
             ]);
     }
 
-    public function test_post_api_post_store_exists()
+    public function test_category_api_category_store_exists()
     {
-        $response = $this->post(route('post.store'));
+        $response = $this->post(route('category.store'));
 
         $response->assertStatus(500);
     }
 
-    public function test_post_api_post_store_none_authenticated()
+    public function test_category_api_category_store_none_authenticated()
     {
-        $response = $this->post(route('post.store'), [], [
+        $response = $this->post(route('category.store'), [], [
             'Accept' => 'application/json',
             'Authorization' => ''
         ]);
@@ -91,13 +90,13 @@ class PostTest extends TestCase
             ]);
     }
 
-    public function test_post_api_post_store_an_authenticated()
+    public function test_category_api_category_store_an_authenticated()
     {
         $user = $this->createUser();
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        $response = $this->post(route('post.store'), [], [
+        $response = $this->post(route('category.store'), [], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
         ]);
@@ -112,14 +111,15 @@ class PostTest extends TestCase
             ]);
     }
 
-    public function test_post_api_post_store_an_authenticated_validation_failed()
+    public function test_category_api_category_store_an_authenticated_validation_failed()
     {
+        $category = $this->createCategory();
 
         $user = $this->createUser();
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        $response = $this->post(route('post.store'), [], [
+        $response = $this->post(route('category.store'), [], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
         ]);
@@ -133,9 +133,8 @@ class PostTest extends TestCase
                 "errors"
             ]);
 
-        $response = $this->post(route('post.store'), [
-            'title' => '',
-            'author_id' => '',
+        $response = $this->post(route('category.store'), [
+            'name' => '',
         ], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
@@ -148,12 +147,10 @@ class PostTest extends TestCase
                 "locale",
                 "message",
                 "errors"
-
             ]);
 
-        $response = $this->post(route('post.store'), [
-            'title' => '',
-            'author_id' => '1',
+        $response = $this->post(route('category.store'), [
+            'name' => $category->name,
         ], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
@@ -166,13 +163,10 @@ class PostTest extends TestCase
                 "locale",
                 "message",
                 "errors"
-
             ]);
 
-        $response = $this->post(route('post.store'), [
-            'title' => $this->faker->title(),
-            'author_id' => '',
-
+        $response = $this->post(route('category.store'), [
+            'slug' => $category->slug,
         ], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
@@ -185,41 +179,20 @@ class PostTest extends TestCase
                 "locale",
                 "message",
                 "errors"
-
-            ]);
-
-        $response = $this->post(route('post.store'), [
-            'title' => $this->faker->title(),
-            'author_id' => '0',
-
-        ], [
-            'Accept' => 'application/json',
-            'Authorization' => 'Bearer ' . $token
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonStructure([
-                "status",
-                "code",
-                "locale",
-                "message",
-                "errors"
-
             ]);
     }
 
-    public function test_post_api_post_store_an_authenticated_create_failed()
+    public function test_category_api_category_store_an_authenticated_create_failed()
     {
-        $post = $this->createPost();
+        $category = $this->createCategory();
 
         $user = $this->createUser();
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        $response = $this->post(route('post.store'), [
-            'title' => $post->title,
-            'body' => 'bbb',
-            'author_id' => '1'
+        $response = $this->post(route('category.store'), [
+            'name' => $category->name,
+            'slug' => $this->faker->slug
         ], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
@@ -232,17 +205,15 @@ class PostTest extends TestCase
                 "locale",
                 "message",
                 "errors"
-
             ]);
 
-        $this->assertDatabaseMissing('posts', [
-            'body' => 'bbb'
+        $this->assertDatabaseMissing('categories', [
+            'slug' => $this->faker->slug
         ]);
 
-        $response = $this->post(route('post.store'), [
-            'title' => 'kkk',
-            'body' => 'bbbb',
-            'author_id' => '0'
+        $response = $this->post(route('category.store'), [
+            'name' => $this->faker->name,
+            'slug' => $category->slug
         ], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
@@ -255,24 +226,43 @@ class PostTest extends TestCase
                 "locale",
                 "message",
                 "errors"
-
             ]);
 
-        $this->assertDatabaseMissing('posts', [
-            'body' => 'bbbb'
+        $this->assertDatabaseMissing('categories', [
+            'name' => $this->faker->name
+        ]);
+
+        $response = $this->post(route('category.store'), [
+            'name' => '',
+            'slug' => $this->faker->slug
+        ], [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                "status",
+                "code",
+                "locale",
+                "message",
+                "errors"
+            ]);
+
+        $this->assertDatabaseMissing('categories', [
+            'slug' => $this->faker->slug
         ]);
     }
 
-    public function test_post_api_post_store_an_authenticated_create_success()
+    public function test_category_api_category_store_an_authenticated_create_success()
     {
         $user = $this->createUser();
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        $response = $this->post(route('post.store'), [
-            'title' => 'am',
-            'body' => 'abc',
-            'author_id' => '2'
+        $response = $this->post(route('category.store'), [
+            'name' => 'nnnn',
+            'slug' => 'nnnn'
         ], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
@@ -286,21 +276,21 @@ class PostTest extends TestCase
                 "data"
             ]);
 
-        $this->assertDatabaseHas('posts', [
-            'body' => 'abc'
+        $this->assertDatabaseHas('categories', [
+            'slug' => 'nnnn'
         ]);
     }
 
-    public function test_post_api_post_update_exists()
+    public function test_category_api_category_update_exists()
     {
-        $response = $this->put(route('post.edit', [1]));
+        $response = $this->put(route('category.edit', [1]));
 
         $response->assertStatus(500);
     }
 
-    public function test_post_api_post_update_none_authenticated()
+    public function test_category_api_category_update_none_authenticated()
     {
-        $response = $this->put(route('post.edit', [1]), [], [
+        $response = $this->put(route('category.edit', [1]), [], [
             'Accept' => 'application/json',
             'Authorization' => ''
         ]);
@@ -311,14 +301,16 @@ class PostTest extends TestCase
             ]);
     }
 
-    public function test_post_api_post_update_an_authenticated_validation_failed()
+    public function test_category_api_category_update_an_authenticated_failed()
     {
+        $category = $this->createCategory();
+
         $user = $this->createUser();
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        $response = $this->put(route('post.edit', [1]), [
-            'title' => ''
+        $response = $this->put(route('category.edit', [1]), [
+            'name' => ''
         ], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
@@ -333,8 +325,8 @@ class PostTest extends TestCase
                 "errors"
             ]);
 
-        $response = $this->put(route('post.edit', [1]), [
-            'author_id' => ''
+        $response = $this->put(route('category.edit', [1]), [
+            'name' => $category->name
         ], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
@@ -349,8 +341,8 @@ class PostTest extends TestCase
                 "errors"
             ]);
 
-        $response = $this->put(route('post.edit', [1]), [
-            'author_id' => 'asdsad'
+        $response = $this->put(route('category.edit', [1]), [
+            'slug' => $category->slug
         ], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
@@ -366,17 +358,16 @@ class PostTest extends TestCase
             ]);
     }
 
-    public function test_post_api_post_update_avatar_an_authenticated_validation_success()
+    public function test_category_api_category_update_an_authenticated_success()
     {
 
         $user = $this->createUser();
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        $response = $this->put(route('post.edit', ['1']), [
-            'title' => $this->faker->name(),
-            'body' => 'lll',
-            'author_id' => '1'
+        $response = $this->put(route('category.edit', ['1']), [
+            'name' => $this->faker->name(),
+            'slug' => $this->faker->slug()
         ], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
@@ -391,16 +382,16 @@ class PostTest extends TestCase
             ]);
     }
 
-    public function test_post_api_post_destroy_exists()
+    public function test_category_api_category_destroy_exists()
     {
-        $response = $this->delete(route('post.destroy', [1]));
+        $response = $this->delete(route('category.destroy', [1]));
 
         $response->assertStatus(500);
     }
 
-    public function test_post_api_post_destroy_none_authenticated()
+    public function test_category_api_category_destroy_none_authenticated()
     {
-        $response = $this->delete(route('post.destroy', [1]), [], [
+        $response = $this->delete(route('category.destroy', [1]), [], [
             'Accept' => 'application/json',
             'Authorization' => ''
         ]);
@@ -411,13 +402,13 @@ class PostTest extends TestCase
             ]);
     }
 
-    public function test_post_api_post_destroy_an_authenticated_failed()
+    public function test_category_api_category_destroy_an_authenticated_failed()
     {
         $user = $this->createUser();
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        $response = $this->delete(route('post.destroy', ['sadsad']), [], [
+        $response = $this->delete(route('category.destroy', ['sadsad']), [], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
         ]);
@@ -431,11 +422,11 @@ class PostTest extends TestCase
                 "trace"
             ]);
 
-        $this->assertDatabaseMissing('users', [
+        $this->assertDatabaseMissing('categories', [
             'id' => 'sadsad'
         ]);
 
-        $response = $this->delete(route('post.destroy', ['0']), [], [
+        $response = $this->delete(route('category.destroy', ['0']), [], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
         ]);
@@ -449,18 +440,18 @@ class PostTest extends TestCase
                 "trace"
             ]);
 
-        $this->assertDatabaseMissing('users', [
+        $this->assertDatabaseMissing('categories', [
             'id' => '0'
         ]);
     }
 
-    public function test_post_api_post_destroy_an_authenticated_success()
+    public function test_category_api_category_destroy_an_authenticated_success()
     {
         $user = $this->createUser();
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        $response = $this->delete(route('post.destroy', ['1']), [], [
+        $response = $this->delete(route('category.destroy', ['1']), [], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
         ]);

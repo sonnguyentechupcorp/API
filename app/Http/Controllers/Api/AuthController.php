@@ -24,7 +24,7 @@ class AuthController extends Controller
         $response = [
             'status' => true,
             'locale' => app()->getLocale(),
-            'message' => __('Login successfully!'),
+            'message' => __('messages.login'),
             'data' => [
                 'user' => $user,
                 'token' => $token
@@ -41,7 +41,7 @@ class AuthController extends Controller
         $response = [
             'status' => true,
             'locale' => app()->getLocale(),
-            'message' => __('Logout successfully!'),
+            'message' => __('messages.logout'),
         ];
 
         return response($response, 200);

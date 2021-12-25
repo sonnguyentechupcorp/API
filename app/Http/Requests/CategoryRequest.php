@@ -21,7 +21,7 @@ class CategoryRequest extends AbstractRequest
 
         return [
             'name' => ['required', 'string', 'unique:categories'],
-            'slug' => ['nullable', 'string'],
+            'slug' => ['nullable', 'string', 'unique:categories'],
         ];
     }
 }

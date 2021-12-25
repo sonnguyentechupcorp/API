@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Mail\SendWelcomeEmailToUser;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -30,7 +29,7 @@ class RegisterController extends Controller
         $response = [
             'status' => true,
             'locale' => app()->getLocale(),
-            'message' => __('Registered successfully!'),
+            'message' => __('messages.register'),
             'data' => [
                 'user' => $user,
                 'token' => $token

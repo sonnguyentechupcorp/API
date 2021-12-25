@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use App\Models\Posts;
 use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
-
     public function index()
     {
         $page = request()->get('page', 1);
@@ -33,7 +33,7 @@ class CategoryController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => __('List'),
+            'message' => __('messages.success'),
             'data' => $category
         ], 200);
     }
@@ -51,7 +51,7 @@ class CategoryController extends Controller
         return response([
             'status' => true,
             'locale' => app()->getLocale(),
-            'message' => __('Created successfully!'),
+            'message' => __('messages.create'),
             'data' => [
                 'category' => $category
             ]
@@ -60,11 +60,12 @@ class CategoryController extends Controller
 
     public function edit(UpdateCategoryRequest $request, $id)
     {
+
         $category = $this->getCategoryById($id);
 
         $category->update([
             'name' => $request->get('name', $category->name),
-            'slug' => $request->get('slug', $category->slug),
+            'slug' => $request->get('slug', $category->slug)
         ]);
 
         Cache::put('category_' . $id, $category);
@@ -73,7 +74,7 @@ class CategoryController extends Controller
         return response([
             'status' => true,
             'locale' => app()->getLocale(),
-            'message' => __('Update success'),
+            'message' => __('messages.update'),
             'data' => [
                 'category' => $category
             ]
@@ -82,9 +83,9 @@ class CategoryController extends Controller
 
     public function destroy($id)
     {
-        $user = $this->getCategoryById($id);
+        $category = $this->getCategoryById($id);
 
-        $user->delete();
+        $category->delete();
 
         Cache::forget('category_' . $id);
         Cache::tags(['category_index'])->flush();
@@ -92,7 +93,7 @@ class CategoryController extends Controller
         return response([
             'status' => true,
             'locale' => app()->getLocale(),
-            'message' => __('Delete category successfully!'),
+            'message' => __('messages.delete'),
         ], 200);
     }
 

@@ -30,7 +30,7 @@ class UserController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => __('List'),
+            'message' => __('messages.success'),
             'data' => $users
         ], 200);
     }
@@ -52,7 +52,7 @@ class UserController extends Controller
         return response([
             'status' => true,
             'locale' => app()->getLocale(),
-            'message' => __('Created successfully!'),
+            'message' => __('messages.create'),
             'data' => [
                 'user' => $user
             ]
@@ -72,7 +72,7 @@ class UserController extends Controller
         return response([
             'status' => true,
             'locale' => app()->getLocale(),
-            'message' => __('User information.'),
+            'message' => __('messages.informationUser'),
             'data' => [
                 'user' => $user
             ]
@@ -109,7 +109,7 @@ class UserController extends Controller
         return response([
             'status' => true,
             'locale' => app()->getLocale(),
-            'message' => __('Update success'),
+            'message' => __('messages.update'),
             'data' => [
                 'user' => $user
             ]
@@ -143,7 +143,7 @@ class UserController extends Controller
         return response([
             'status' => true,
             'locale' => app()->getLocale(),
-            'message' => __('Delete user successfully!'),
+            'message' => __('messages.delete'),
         ], 200);
     }
 

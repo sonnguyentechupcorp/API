@@ -20,8 +20,8 @@ class UpdateCategoryRequest extends AbstractRequest
     {
 
         return [
-            'name' => ['required', 'string', 'unique:categories'],
-            'slug' => ['nullable', 'string'],
+            'name' => ['string', 'unique:categories'],
+            'slug' => ['nullable', 'string', 'unique:categories'],
         ];
     }
 }
